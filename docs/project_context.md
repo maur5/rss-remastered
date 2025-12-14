@@ -488,11 +488,22 @@ When completing a major phase transition, the commit should:
 - SESSION_ID is set via environment variable at session start
 - Each Claude session (VS Code tab) has its own checkpoint file
 
-**When to Write Checkpoint:**
-- At EVERY status update (workflow, sprint, story changes)
-- Before any long-running operation
-- When switching workflow phases
-- Proactively when context feels heavy
+**When to Write Checkpoint (CRITICAL):**
+
+1. **On agent activation** — Immediately after loading a BMAD agent, write checkpoint with:
+   - Agent name
+   - Context: "Agent activated, awaiting work"
+   - This ensures recovery even if compaction happens before any real work
+
+2. **On workflow start** — When starting any workflow (dev-story, code-review, etc.), update checkpoint with:
+   - Agent name
+   - Workflow name
+   - Target (story ID, document, etc.)
+   - Initial pending steps from the workflow
+
+3. **On status updates** — At every status file change (workflow, sprint, story), update checkpoint with current progress
+
+4. **Proactively** — When context feels heavy or before long-running operations
 
 **Checkpoint Format:**
 ```markdown
