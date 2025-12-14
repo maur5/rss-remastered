@@ -1,0 +1,26 @@
+# RSS Remastered Configuration
+# Copy to config.yaml (or data/config.yaml) and customize
+
+# AI Provider Configuration
+# Supports: openai (OpenAI-compatible APIs), ollama (local models), none (disabled)
+ai:
+  provider: none  # Options: openai, ollama, none
+  # base_url: http://localhost:11434  # For Ollama
+  # base_url: https://api.openai.com/v1  # For OpenAI
+  # model: llama3.2  # For Ollama
+  # model: gpt-4  # For OpenAI
+  # api_key: ""  # Set via RSS_AI__API_KEY env var for security
+
+# Logging Configuration
+logging:
+  level: info  # Options: debug, info, warning, error
+  format: json  # Options: json, console
+
+# Database Configuration (optional - defaults to SQLite in data/)
+# database_url: sqlite+aiosqlite:///data/rss.db
+
+# Base URL for reverse proxy support (leave empty for direct access)
+# base_url: https://rss.example.com
+
+# Data directory for persistent storage
+# data_dir: data

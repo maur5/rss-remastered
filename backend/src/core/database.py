@@ -5,9 +5,10 @@ This module provides the SQLAlchemy 2.0 async database infrastructure:
 - AsyncSessionLocal: Session factory for creating async database sessions
 - get_db: FastAPI dependency for injecting database sessions into routes
 - Base: Declarative base class for all SQLAlchemy models
+
+Story 1.5: Updated to use Settings from core.config
 """
 
-import os
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Annotated
@@ -21,18 +22,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-
-def get_database_url() -> str:
-    """Get database URL from environment or use default.
-
-    The URL can be configured via RSS_DATABASE_URL environment variable.
-    Default is SQLite database at data/rss.db.
-
-    Returns:
-        Database URL string for async SQLAlchemy connection.
-    """
-    default_url = "sqlite+aiosqlite:///data/rss.db"
-    return os.environ.get("RSS_DATABASE_URL", default_url)
+from src.core.config import get_settings
 
 
 def _ensure_data_directory(database_url: str) -> None:
@@ -64,12 +54,12 @@ def create_engine(database_url: str | None = None) -> AsyncEngine:
 
     Args:
         database_url: Optional database URL override. If not provided,
-            uses RSS_DATABASE_URL environment variable or default.
+            uses Settings.database_url from configuration.
 
     Returns:
         Configured AsyncEngine instance.
     """
-    url = database_url or get_database_url()
+    url = database_url or get_settings().database_url
     _ensure_data_directory(url)
 
     # SQLite-specific connect args for async operation

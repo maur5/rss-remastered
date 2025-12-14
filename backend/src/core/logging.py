@@ -4,47 +4,55 @@ This module configures structlog for JSON output in production and
 human-readable colored output in development.
 
 Story 1.4: Configure Structured Logging
+Story 1.5: Updated to use Settings from core.config
 
-Environment Variables:
-    RSS_LOG_LEVEL: Logging level (debug, info, warning, error). Default: info
-    RSS_LOG_FORMAT: Output format (json, console). Default: json
+Configuration:
+    log_level: Logging level (debug, info, warning, error). Default: info
+    log_format: Output format (json, console). Default: json
+
+These can be set via:
+    - Environment variables: RSS_LOG_LEVEL, RSS_LOG_FORMAT
+    - YAML config file: logging.level, logging.format
+    - Settings constructor arguments
 """
 
 import logging
-import os
 import sys
 from typing import Any
 
 import structlog
 from structlog.types import Processor
 
+from src.core.config import get_settings
+
 
 def get_log_level() -> int:
-    """Get the configured log level from environment.
+    """Get the configured log level from settings.
 
     Returns:
         The logging level constant (e.g., logging.INFO).
     """
-    level_name = os.getenv("RSS_LOG_LEVEL", "info").upper()
+    settings = get_settings()
+    level_name = settings.log_level.upper()
     return getattr(logging, level_name, logging.INFO)
 
 
 def get_log_format() -> str:
-    """Get the configured log format from environment.
+    """Get the configured log format from settings.
 
     Returns:
         The log format string ('json' or 'console').
     """
-    return os.getenv("RSS_LOG_FORMAT", "json").lower()
+    return get_settings().log_format
 
 
 def setup_logging() -> None:
     """Configure structlog for the application.
 
     Sets up:
-    - JSON format for production (RSS_LOG_FORMAT=json)
-    - Human-readable colored format for development (RSS_LOG_FORMAT=console)
-    - Configurable log level via RSS_LOG_LEVEL environment variable
+    - JSON format for production (log_format=json)
+    - Human-readable colored format for development (log_format=console)
+    - Configurable log level via settings
 
     This function should be called once at application startup.
     """
