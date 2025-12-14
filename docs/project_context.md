@@ -385,5 +385,136 @@ log.info("transformation_started", job_id=42, content_id=123)
 
 ---
 
-_Last updated: 2025-12-13_
-_Source: docs/architecture.md_
+## Git Workflow Rules
+
+**Branch Strategy:**
+
+| Branch | Purpose | Lifetime |
+|--------|---------|----------|
+| `main` | Production-ready code | Permanent |
+| `dev` | Integration branch | Permanent |
+| `story/<epic>-<story>-<short-name>` | Story implementation | Until merged to dev |
+
+**Branch Workflow:**
+1. **Story start:** Create branch from `dev`
+   - Format: `story/1-1-init-backend` (epic-story-shortname)
+   - Command: `git checkout -b story/1-1-init-backend dev`
+
+2. **During development:** Commit to story branch
+   - All `[story]` commits happen here
+   - Push at end of session or before context switch
+
+3. **Story validation:** Stay on story branch
+   - Code review and testing happen here
+   - Additional commits as needed for fixes
+
+4. **Story done:** Merge to dev
+   - `git checkout dev && git merge --no-ff story/1-1-init-backend`
+   - Use `--no-ff` to preserve branch history
+   - Delete story branch after merge
+
+5. **Epic/Phase completion:** Merge dev to main
+   - Creates release checkpoint
+   - Tag if desired: `git tag v0.1.0-epic1`
+
+**Commit at Status Update Checkpoints:**
+- ALWAYS create a git commit when updating ANY of these files:
+  - `docs/bmm-workflow-status.yaml` (workflow phase progress)
+  - `docs/sprint-artifacts/sprint-status.yaml` (sprint/story progress)
+  - Story files in `docs/sprint-artifacts/` (story completion)
+- Include ALL related work in the same commit (code + status update together)
+
+**Commit Message Format:**
+
+| Prefix | When to Use | Example |
+|--------|-------------|---------|
+| `[phase]` | Completing a BMM phase | `[phase] Complete Phase 2 Solutioning` |
+| `[workflow]` | Completing a workflow within a phase | `[workflow] Complete architecture document` |
+| `[epic]` | Epic start or completion | `[epic] Complete Epic 1: Project Foundation` |
+| `[sprint]` | Sprint-level status changes | `[sprint] Start Epic 1 implementation` |
+| `[story]` | Story state transitions | `[story] 1-1: Dev complete, ready for validation` |
+| `[fix]` | Hotfix outside normal story flow | `[fix] Resolve database connection timeout` |
+| `[correction]` | Course correction pivot | `[correction] Pivot from REST to GraphQL` |
+| `[retro]` | Retrospective completion | `[retro] Epic 1 retrospective - lessons captured` |
+| `[infra]` | Infrastructure/config changes | `[infra] Add Docker compose for local dev` |
+
+**Story Lifecycle Commits:**
+Stories warrant commits at these checkpoints:
+- Story started (picked up for dev)
+- Dev complete (code written, ready for review/validation)
+- Validation complete (tests pass, review approved)
+- Story done (acceptance criteria met, status updated)
+
+Not every story needs all four commits — use judgment. At minimum, commit at dev complete and story done.
+
+**Phase Transitions (High-Ceremony Commits):**
+When completing a major phase transition, the commit should:
+- Summarize what was accomplished in the phase
+- Reference key artifacts created
+- Example: `[phase] Complete Phase 2 Solutioning - architecture, project_context, epics, test-design ready`
+
+**Push Rules:**
+
+| When | Push Required? | Reason |
+|------|----------------|--------|
+| Phase completion | Yes | Major milestone visibility |
+| Epic completion | Yes | Closes body of work |
+| Story done | Yes | Validated work ready for integration |
+| End of work session | Yes | Backup, progress visibility |
+| Before agent/context switch | Recommended | Clean handoff |
+| Mid-story dev commits | No | Keep flexibility to amend |
+
+**Push command:** `git push origin <branch>` (never force push to main/dev without explicit approval)
+
+**Why:** Atomic commits at status checkpoints create traceable history between documentation and implementation progress. Feature branches per story enable clean isolation and review gates.
+
+---
+
+## Session Checkpoint Rules
+
+**Purpose:** Preserve BMAD agent state across context compaction.
+
+**Checkpoint Location:** `.claude/checkpoints/{SESSION_ID}.md`
+- SESSION_ID is set via environment variable at session start
+- Each Claude session (VS Code tab) has its own checkpoint file
+
+**When to Write Checkpoint:**
+- At EVERY status update (workflow, sprint, story changes)
+- Before any long-running operation
+- When switching workflow phases
+- Proactively when context feels heavy
+
+**Checkpoint Format:**
+```markdown
+# Session Checkpoint
+_Updated: {timestamp}_
+
+## Resume
+**Agent:** {agent name - pm, dev, architect, sm, tea, etc.}
+**Context:** {brief description of current work}
+
+## Current State
+- **Story:** {story ID if applicable}
+- **Phase:** {dev|validation|done}
+- **Branch:** {current git branch}
+
+## Pending Steps
+{numbered list of remaining work}
+
+## Notes
+{any additional context}
+```
+
+**After Compaction:**
+- A hook will automatically inject agent activation instructions
+- The checkpoint contents will be displayed
+- Follow the activation steps, then continue from Pending Steps
+
+**Why:** Context compaction loses agent persona and workflow state. Checkpoints ensure the correct agent reloads and work continues from the right place.
+
+**Reference:** See `docs/claude-hooks-reference.md` for full system documentation.
+
+---
+
+_Last updated: 2025-12-14_
+_Source: docs/architecture.md, user requirements_
