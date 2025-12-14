@@ -417,6 +417,16 @@ log.info("transformation_started", job_id=42, content_id=123)
    - Creates release checkpoint
    - Tag if desired: `git tag v0.1.0-epic1`
 
+**Branch Verification (CRITICAL):**
+Before starting ANY implementation work, agents MUST:
+1. Check current branch: `git branch --show-current`
+2. Verify branch matches the work:
+   - Story implementation → must be on `story/<epic>-<story>-*` branch
+   - If on wrong branch → create/switch to correct branch before any changes
+   - If on `main` → STOP and switch to appropriate branch
+   - If on `dev` and starting story work → create story branch first
+3. Never commit implementation work directly to `dev` or `main`
+
 **Commit at Status Update Checkpoints:**
 - ALWAYS create a git commit when updating ANY of these files:
   - `docs/bmm-workflow-status.yaml` (workflow phase progress)
