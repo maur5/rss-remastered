@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-instructions name="parallel-epic-execution">
+  <overview>
+    Execute an entire epic using parallel subagents with a SERIAL PIPELINE per story.
+    Pipeline length depends on current story status - respects partially completed sprints.
+
+    Stories within a wave run in parallel, but each story completes its full lifecycle before
+    the orchestrator merges it. This is NOT batched phases - it's parallel serial pipelines.
+
+    Key Principle: The SM orchestrator owns all git operations (branch creation, merging, pushing)
+    and status updates. Dev subagents only commit within their branches.
+  </overview>
+
+  <pipeline-by-status>
+    <status name="backlog">create → validate → implement → review (4 CLI calls)</status>
+    <status name="drafted">validate → implement → review (3 CLI calls)</status>
+    <status name="ready-for-dev">implement → review (2 CLI calls)</status>
+    <status name="done">SKIP - do not create worktree or dispatch</status>
+  </pipeline-by-status>
+
+  <prerequisites>
+    <item>Epic file exists with stories</item>
+    <item>sprint-status.yaml exists and is current</item>
+    <item>project_context.md available</item>
+    <item>Clean git state on integration branch (dev)</item>
+  </prerequisites>
+
+  <phase name="1-preparation" title="Analyze and Plan">
+    <step n="1.1" title="Load Context">
+      <action>Read sprint-status.yaml to identify stories for the target epic</action>
+      <action>Read project_context.md for coding standards</action>
+      <action>Read implementation readiness report for dependency analysis (if exists)</action>
+      <action>Identify all stories with status: drafted, backlog, or ready-for-dev</action>
+    </step>
+
+    <step n="1.2" title="Dependency Analysis">
+      <action>Map story dependencies within the epic</action>
+      <action>Identify stories that can run in parallel (no dependencies on pending stories)</action>
+      <action>Group stories into waves based on dependencies</action>
+      <output>
+        Wave plan example:
+        - Wave 1: Stories with no internal dependencies (can run parallel)
+        - Wave 2: Stories depending on Wave 1 completion
+        - Wave N: Final stories with most dependencies
+      </output>
+    </step>
+
+    <step n="1.3" title="Verify Prerequisites">
+      <action>Note story status from sprint-status.yaml - this determines pipeline length</action>
+      <action>Skip stories with status=done (already complete)</action>
+      <action>Check git status - must be clean on dev branch</action>
+      <action>Limit wave size to max_parallel_stories (default: 3)</action>
+    </step>
+  </phase>
+
+  <phase name="2-execution" title="Parallel Story Execution (Serial Pipeline Per Story)">
+    <step n="2.0" title="Create Worktrees for Wave">
+      <critical>Each story gets its own worktree for filesystem isolation</critical>
+      <action>For each story in current wave, create a worktree:</action>
+      <command>git worktree add /tmp/wt-story-{story_id} -b story/{story_branch} dev</command>
+      <note>Worktrees allow parallel CLI subprocesses without git checkout conflicts</note>
+    </step>
+
+    <step n="2.1" title="Dispatch Serial Pipelines (Parallel per Wave)">
+      <critical>Use PARALLEL Bash tool calls - one per story - all in single message</critical>
+      <critical>Pipeline length depends on story status - skip stories already done</critical>
+
+      <action>For stories with status=backlog (no story file yet), dispatch full pipeline:</action>
+      <pattern>
+        Bash({
+          command: "cd /tmp/wt-story-{story_id} &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:sm
+
+*create-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:sm
+
+*validate-create-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*develop-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*code-review {story_id} #yolo'",
+          timeout: 600000
+        })
+      </pattern>
+
+      <action>For stories with status=drafted (story file exists, not validated), dispatch validation + implementation:</action>
+      <pattern>
+        Bash({
+          command: "cd /tmp/wt-story-{story_id} &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:sm
+
+*validate-create-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*develop-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*code-review {story_id} #yolo'",
+          timeout: 600000
+        })
+      </pattern>
+
+      <action>For stories with status=ready-for-dev (validated, ready to implement), dispatch implementation only:</action>
+      <pattern>
+        Bash({
+          command: "cd /tmp/wt-story-{story_id} &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*develop-story {story_id} #yolo' &amp;&amp; claude --dangerously-skip-permissions -p '/bmad:bmm:agents:dev
+
+*code-review {story_id} #yolo'",
+          timeout: 600000
+        })
+      </pattern>
+
+      <action>For stories with status=done, skip entirely (do not create worktree or dispatch)</action>
+
+      <note>All Bash calls in a single message execute concurrently</note>
+      <note>SM waits for all to complete before proceeding to merge</note>
+    </step>
+
+    <step n="2.2" title="Check Progress (Optional)">
+      <description>While waiting, SM can poll worktree git logs for progress</description>
+      <command>for wt in /tmp/wt-story-*; do echo "=== $wt ===" &amp;&amp; git -C $wt log --oneline -5; done</command>
+      <note>This is optional - SM can simply wait for Bash calls to return</note>
+    </step>
+
+    <step n="2.3" title="Evaluate Results">
+      <action>When all Bash calls return, check exit codes</action>
+      <action>For each story, determine if pipeline completed successfully</action>
+      <action>Stories with non-zero exit code: log as blocked, skip merge</action>
+      <action>Stories with zero exit code: ready for merge</action>
+    </step>
+
+    <step n="2.4" title="Merge and Update (Sequential)">
+      <critical>Orchestrator performs all merges and status updates</critical>
+      <action>For each successful story (sequential to avoid conflicts):</action>
+      <sequence>
+        <item>git checkout dev &amp;&amp; git pull origin dev</item>
+        <item>git merge --no-ff story/{branch} -m "Merge story {story_id}: {story_title}"</item>
+        <item>Update sprint-status.yaml: story status → done</item>
+        <item>git add . &amp;&amp; git commit -m "chore: mark story {story_id} done"</item>
+        <item>git push origin dev</item>
+        <item>git worktree remove /tmp/wt-story-{story_id}</item>
+        <item>git branch -d story/{branch}</item>
+        <item>git push origin --delete story/{branch}</item>
+      </sequence>
+      <conflict-handling>
+        If merge conflict on sprint-status.yaml:
+        - Accept incoming (dev) version
+        - Re-apply the single status change for this story
+        - Commit the resolved merge
+
+        If code merge conflict:
+        - HALT and report to user for manual resolution
+      </conflict-handling>
+    </step>
+
+    <step n="2.5" title="Wave Completion">
+      <action>When all stories in current wave processed:</action>
+      <action>Report results: N succeeded, M blocked</action>
+      <action>Verify tests pass on dev branch (if test command configured)</action>
+      <action>If tests fail: HALT and report to user</action>
+      <action>If next wave exists: return to step 2.0</action>
+      <action>If final wave complete: proceed to phase 3</action>
+    </step>
+  </phase>
+
+  <phase name="3-completion" title="Epic Completion">
+    <step n="3.1" title="Final Verification">
+      <action>Verify all epic stories show status: done in sprint-status.yaml</action>
+      <action>Run full test suite on dev branch</action>
+      <action>Verify build succeeds</action>
+    </step>
+
+    <step n="3.2" title="Update Epic Status">
+      <action>Update sprint-status.yaml: epic-{N} status → done</action>
+      <action>Commit and push the epic completion</action>
+    </step>
+
+    <step n="3.3" title="Generate Execution Log">
+      <action>Create execution log in sprint_artifacts:</action>
+      <output-template>
+        # Parallel Epic Execution Log - Epic {epic_number}
+        Date: {date}
+
+        ## Execution Summary
+        - Total Stories: N
+        - Waves Executed: M
+        - Total Time: (if tracked)
+
+        ## Wave Details
+        ### Wave 1
+        - Stories: [list]
+        - Parallel Executions: N
+        - Issues Found in Review: X
+        - Issues Fixed: Y
+
+        ### Wave N...
+
+        ## Story Results
+        | Story | Implementation | Review | Issues | Status |
+        |-------|---------------|--------|--------|--------|
+        | 1-3   | success       | approved_with_fixes | 5 | done |
+
+        ## Files Changed
+        - Total files: N
+        - [grouped by story]
+
+        ## Lessons Learned
+        - [Any blockers or issues encountered]
+      </output-template>
+    </step>
+
+    <step n="3.4" title="Recommend Retrospective">
+      <action>Inform user that epic-retrospective workflow is available</action>
+      <action>Suggest running retrospective to capture learnings</action>
+    </step>
+  </phase>
+
+  <error-handling>
+    <scenario name="implementation-failure">
+      <condition>Dev subagent returns status: failed or blocked</condition>
+      <action>Log the failure with details</action>
+      <action>Skip story in current wave</action>
+      <action>Continue with other parallel stories</action>
+      <action>Report blocked stories at wave completion</action>
+      <action>User decides: retry, skip, or halt epic</action>
+    </scenario>
+
+    <scenario name="review-rejection">
+      <condition>Code review returns status: rejected</condition>
+      <action>Log rejection reasons</action>
+      <action>Option A: Re-dispatch implementation with fix instructions</action>
+      <action>Option B: Flag for manual intervention</action>
+      <action>Do not merge rejected stories</action>
+    </scenario>
+
+    <scenario name="merge-conflict">
+      <condition>Git merge fails</condition>
+      <action>If sprint-status.yaml only: auto-resolve as described in step 2.4</action>
+      <action>If code conflict: halt and request manual resolution</action>
+    </scenario>
+
+    <scenario name="test-failure-on-dev">
+      <condition>Tests fail after merge to dev</condition>
+      <action>HALT wave execution</action>
+      <action>Report failure to user</action>
+      <action>Options: revert merge, fix forward, or manual intervention</action>
+    </scenario>
+  </error-handling>
+
+  <constraints>
+    <item>Never dispatch more than max_parallel_stories concurrently</item>
+    <item>Always run code review before merge (no exceptions)</item>
+    <item>Orchestrator owns ALL git operations to dev branch</item>
+    <item>Orchestrator owns ALL sprint-status.yaml updates</item>
+    <item>Subagents work only on their story branches</item>
+    <item>Push to origin after each successful merge (fail-fast)</item>
+  </constraints>
+</workflow-instructions>
