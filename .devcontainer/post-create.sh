@@ -9,8 +9,23 @@ export PATH="$HOME/.local/bin:$PATH"
 # Set up symlinks for persistent user data
 # These point to the mounted ~/.persist volume which contains sensitive data
 echo "Setting up persistent user data symlinks..."
+
+# Handle .claude
+if [ -d ~/.claude ] && [ ! -L ~/.claude ]; then
+  cp -rn ~/.claude/* ~/.persist/claude/ 2>/dev/null || true
+  rm -rf ~/.claude
+fi
 ln -sfn ~/.persist/claude ~/.claude
+
+# Handle .config (may exist as directory from base image)
+if [ -d ~/.config ] && [ ! -L ~/.config ]; then
+  echo "Moving existing .config to persist volume..."
+  find ~/.config -mindepth 1 -maxdepth 1 -exec cp -rn {} ~/.persist/config/ \; 2>/dev/null || true
+  rm -rf ~/.config
+fi
 ln -sfn ~/.persist/config ~/.config
+
+# Handle bash history
 mkdir -p ~/.persist/bash
 ln -sf ~/.persist/bash/.bash_history ~/.bash_history
 
