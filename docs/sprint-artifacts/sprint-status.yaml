@@ -45,8 +45,8 @@ development_status:
   epic-1: in-progress
   1-1-initialize-backend-project-structure: done
   1-2-initialize-frontend-project-structure: done
-  1-3-configure-database-and-migrations: backlog
-  1-4-configure-structured-logging: backlog
+  1-3-configure-database-and-migrations: done
+  1-4-configure-structured-logging: done
   1-5-configure-pydantic-settings: backlog
   1-6-docker-single-container-deployment: backlog
   epic-1-retrospective: optional
