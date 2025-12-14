@@ -1,0 +1,146 @@
+# generated: 2025-12-14
+# project: rss-remastered
+# project_key: rss-remastered
+# tracking_system: file-system
+# story_location: docs/sprint-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - drafted: Story file created in stories folder
+#   - ready-for-dev: Draft approved and story context created
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - completed: Retrospective has been done
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically drafts next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2025-12-14
+project: rss-remastered
+project_key: rss-remastered
+tracking_system: file-system
+story_location: docs/sprint-artifacts
+
+development_status:
+  # Epic 1: Project Foundation & Core Infrastructure
+  epic-1: backlog
+  1-1-initialize-backend-project-structure: backlog
+  1-2-initialize-frontend-project-structure: backlog
+  1-3-configure-database-and-migrations: backlog
+  1-4-configure-structured-logging: backlog
+  1-5-configure-pydantic-settings: backlog
+  1-6-docker-single-container-deployment: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Subscription Management
+  epic-2: backlog
+  2-1-create-subscription-data-model: backlog
+  2-2-add-youtube-channel-subscription: backlog
+  2-3-add-rss-feed-subscription: backlog
+  2-4-add-podcast-feed-subscription: backlog
+  2-5-view-all-subscriptions: backlog
+  2-6-edit-subscription-settings: backlog
+  2-7-delete-subscription: backlog
+  2-8-tag-management-for-subscriptions: backlog
+  2-9-opml-import: backlog
+  2-10-opml-export: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Content Aggregation & Feed Health
+  epic-3: backlog
+  3-1-create-content-item-data-model: backlog
+  3-2-implement-background-job-queue: backlog
+  3-3-fetch-youtube-channel-content: backlog
+  3-4-fetch-rss-feed-content: backlog
+  3-5-fetch-podcast-episode-content: backlog
+  3-6-view-aggregated-content-feed: backlog
+  3-7-filter-content-by-subscription-and-type: backlog
+  3-8-search-content: backlog
+  3-9-mark-content-as-read-unread: backlog
+  3-10-display-feed-health-status: backlog
+  3-11-manual-feed-retry: backlog
+  3-12-automatic-retry-with-backoff: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Content Transformation Pipeline
+  epic-4: backlog
+  4-1-create-transformation-data-model: backlog
+  4-2-configure-ai-provider-abstraction: backlog
+  4-3-extract-youtube-subtitles: backlog
+  4-4-request-on-demand-transformation: backlog
+  4-5-ai-powered-subtitle-to-article-transformation: backlog
+  4-6-clean-verbal-artifacts: backlog
+  4-7-convert-visual-references-to-verbal-descriptions: backlog
+  4-8-view-transformation-queue-and-progress: backlog
+  4-9-access-completed-transformations: backlog
+  4-10-transformation-progress-notifications: backlog
+  4-11-configure-transformation-quality-preferences: backlog
+  4-12-graceful-degradation-without-ai: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Web Application & PWA
+  epic-5: backlog
+  5-1-implement-app-shell-and-layout: backlog
+  5-2-implement-dashboard-view: backlog
+  5-3-implement-subscriptions-list-view: backlog
+  5-4-implement-add-subscription-modal: backlog
+  5-5-implement-content-feed-view: backlog
+  5-6-implement-article-reader-view: backlog
+  5-7-implement-theme-toggle: backlog
+  5-8-implement-system-health-dashboard: backlog
+  5-9-implement-queue-view-in-context-panel: backlog
+  5-10-implement-pwa-support: backlog
+  5-11-implement-responsive-mobile-experience: backlog
+  5-12-implement-accessibility-features: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Content Delivery & Integrations
+  epic-6: backlog
+  6-1-generate-rss-2-0-podcast-feeds-deferred-to-v1-1: backlog
+  6-2-create-personal-podcast-feed-urls-deferred-to-v1-1: backlog
+  6-3-include-episode-metadata-in-feeds-deferred-to-v1-1: backlog
+  6-4-serve-media-files-for-plex: backlog
+  6-5-serve-media-files-for-jellyfin: backlog
+  6-6-organize-content-into-per-user-libraries: backlog
+  6-7-sonarr-api-integration-read: backlog
+  6-8-radarr-api-integration-read: backlog
+  6-9-external-api-authentication: backlog
+  6-10-content-metadata-api: backlog
+  6-11-subscription-status-api: backlog
+  6-12-webhook-notifications-for-integrations: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: API Security & Notifications
+  epic-7: backlog
+  7-1-api-key-generation: backlog
+  7-2-api-key-management: backlog
+  7-3-yaml-configuration-file-support: backlog
+  7-4-auto-generate-vapid-keys: backlog
+  7-5-push-notification-subscription: backlog
+  7-6-transformation-completion-notifications: backlog
+  7-7-feed-health-alert-notifications: backlog
+  7-8-notification-preferences: backlog
+  7-9-https-support: backlog
+  7-10-security-headers: backlog
+  7-11-rate-limiting-for-api: backlog
+  7-12-audit-logging: backlog
+  epic-7-retrospective: optional
