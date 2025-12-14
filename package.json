@@ -1,0 +1,29 @@
+{
+  "name": "rss-remastered",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report test-results/html"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@faker-js/faker": "^9.2.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.49.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^25.0.1",
+    "happy-dom": "^20.0.11",
+    "jsdom": "^27.3.0",
+    "shadcn": "^3.6.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.15"
+  },
+  "optionalDependencies": {
+    "@seontechnologies/playwright-utils": "^1.0.0"
+  }
+}

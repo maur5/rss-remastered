@@ -1,0 +1,150 @@
+{
+  "name": "rss-remastered",
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false,
+      "installDockerCompose": true,
+      "version": "latest",
+      "dockerCompose": "v2"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20",
+      "nodeGypDependencies": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "installTools": true
+    },
+    "ghcr.io/va-h/devcontainers-features/uv:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "charliermarsh.ruff",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-playwright.playwright",
+        "bradlc.vscode-tailwindcss",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "yoavbls.pretty-ts-errors",
+        "usernamehw.errorlens",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "python.testing.unittestEnabled": false,
+        "python.testing.cwd": "${workspaceFolder}/backend",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          }
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+          }
+        },
+        "[typescriptreact]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit"
+          }
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[markdown]": {
+          "editor.formatOnSave": true,
+          "editor.wordWrap": "on"
+        },
+        "playwright.reuseBrowser": true,
+        "playwright.showTrace": true,
+        "files.associations": {
+          "*.env.example": "properties",
+          "*.env.local": "properties",
+          "Dockerfile*": "dockerfile",
+          "docker-compose*.yml": "yaml",
+          "*.md": "markdown"
+        },
+        "editor.rulers": [80, 120],
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": true,
+        "editor.suggestSelection": "first",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "files.eol": "\n",
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/.ruff_cache": true,
+          "**/node_modules": true,
+          "**/.venv": true,
+          "**/dist": true,
+          "**/build": true
+        },
+        "search.exclude": {
+          "**/node_modules": true,
+          "**/.venv": true,
+          "**/dist": true,
+          "**/build": true,
+          "**/.pytest_cache": true,
+          "**/playwright-report": true,
+          "**/test-results": true
+        },
+        "git.autofetch": true,
+        "git.confirmSync": false,
+        "errorLens.enabledDiagnosticLevels": ["error", "warning"]
+      }
+    }
+  },
+  "mounts": [
+    "source=devcontainer-rss-remastered-vscode,target=/home/vscode/.vscode-server,type=volume",
+    "source=devcontainer-rss-remastered-vscode-insiders,target=/home/vscode/.vscode-server-insiders,type=volume",
+    "source=devcontainer-rss-remastered-user-data,target=/home/vscode/.persist,type=volume"
+  ],
+  "forwardPorts": [8080, 5173, 8000],
+  "portsAttributes": {
+    "8080": { "label": "Application", "onAutoForward": "notify" },
+    "5173": { "label": "Vite Dev Server", "onAutoForward": "silent" },
+    "8000": { "label": "FastAPI Backend", "onAutoForward": "silent" }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "PLAYWRIGHT_BROWSERS_PATH": "/home/vscode/.cache/ms-playwright"
+  },
+  "runArgs": [
+    "--init",
+    "--shm-size=2gb",
+    "--name=devcontainer-rss-remastered"
+  ]
+}

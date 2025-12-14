@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(uv --version:*)",
+      "Bash(docker --version:*)",
+      "Bash(docker volume ls:*)",
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(xxd:*)",
+      "Bash(pgrep:*)",
+      "Bash(while read f)",
+      "Bash(done)",
+      "Bash(docker volume rm:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker volume create:*)",
+      "Bash(docker run:*)",
+      "Bash(alpine sh -c '\n    mkdir -p /dst/stable /dst/insiders\n    cp -a /src-stable/. /dst/stable/ 2>/dev/null || true\n    cp -a /src-insiders/. /dst/insiders/ 2>/dev/null || true\n    chown -R 1000:1000 /dst\n    echo \"\"Migrated:\"\"\n    du -sh /dst/stable /dst/insiders\n  ')",
+      "Bash(chmod:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ]
+}

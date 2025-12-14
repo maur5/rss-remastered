@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSS-Remastered Design Directions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: hsl(222, 47%, 11%);
+      --background-card: hsl(222, 47%, 14%);
+      --background-elevated: hsl(222, 47%, 17%);
+      --foreground: hsl(210, 40%, 98%);
+      --foreground-muted: hsl(215, 20%, 65%);
+      --border: hsl(217, 33%, 22%);
+      --border-subtle: hsl(217, 33%, 17%);
+      --accent: hsl(172, 66%, 50%);
+      --accent-hover: hsl(172, 66%, 45%);
+      --accent-foreground: hsl(222, 47%, 11%);
+      --success: hsl(142, 71%, 45%);
+      --success-bg: hsla(142, 71%, 45%, 0.15);
+      --warning: hsl(38, 92%, 50%);
+      --warning-bg: hsla(38, 92%, 50%, 0.15);
+      --destructive: hsl(0, 84%, 60%);
+      --destructive-bg: hsla(0, 84%, 60%, 0.15);
+      --info: hsl(217, 91%, 60%);
+      --info-bg: hsla(217, 91%, 60%, 0.15);
+      --radius: 8px;
+      --radius-sm: 4px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+
+    /* Navigation */
+    .nav-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--background-card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-tab {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--foreground-muted);
+      transition: all 0.15s ease;
+    }
+
+    .nav-tab:hover {
+      background: var(--background-elevated);
+      color: var(--foreground);
+    }
+
+    .nav-tab.active {
+      background: var(--accent);
+      color: var(--accent-foreground);
+      border-color: var(--accent);
+    }
+
+    /* Main content */
+    .main-content {
+      padding-top: 80px;
+    }
+
+    .direction {
+      display: none;
+      min-height: calc(100vh - 80px);
+    }
+
+    .direction.active {
+      display: block;
+    }
+
+    /* Direction Header */
+    .direction-header {
+      padding: 32px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background-card);
+    }
+
+    .direction-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .direction-subtitle {
+      color: var(--foreground-muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .direction-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 4px 12px;
+      background: var(--background-elevated);
+      border-radius: 9999px;
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    /* ===== DIRECTION 1: Classic *arr ===== */
+    .d1-layout {
+      display: flex;
+      height: calc(100vh - 180px);
+    }
+
+    .d1-sidebar {
+      width: 220px;
+      background: var(--background-card);
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      flex-shrink: 0;
+    }
+
+    .d1-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--foreground-muted);
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .d1-nav-item:hover { background: var(--background-elevated); color: var(--foreground); }
+    .d1-nav-item.active { background: var(--accent); color: var(--accent-foreground); }
+
+    .d1-main {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .d1-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .d1-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .d1-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--background-card);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+      color: var(--foreground-muted);
+    }
+
+    .d1-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .d1-table tr:hover { background: var(--background-card); }
+
+    .d1-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .d1-status.healthy { background: var(--success-bg); color: var(--success); }
+    .d1-status.warning { background: var(--warning-bg); color: var(--warning); }
+    .d1-status.error { background: var(--destructive-bg); color: var(--destructive); }
+
+    /* ===== DIRECTION 2: Modern Dashboard ===== */
+    .d2-layout {
+      display: flex;
+      height: calc(100vh - 180px);
+    }
+
+    .d2-sidebar {
+      width: 260px;
+      background: var(--background-card);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      flex-shrink: 0;
+    }
+
+    .d2-logo {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .d2-nav-section {
+      margin-bottom: 24px;
+    }
+
+    .d2-nav-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--foreground-muted);
+      margin-bottom: 12px;
+    }
+
+    .d2-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      color: var(--foreground-muted);
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: all 0.15s;
+    }
+
+    .d2-nav-item:hover { background: var(--background-elevated); color: var(--foreground); }
+    .d2-nav-item.active { background: var(--accent); color: var(--accent-foreground); }
+
+    .d2-main {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .d2-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .d2-page-title {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .d2-health-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      border-radius: var(--radius);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .d2-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .d2-stat-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .d2-stat-label {
+      font-size: 12px;
+      color: var(--foreground-muted);
+      margin-bottom: 8px;
+    }
+
+    .d2-stat-value {
+      font-size: 32px;
+      font-weight: 600;
+    }
+
+    .d2-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .d2-subscription-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .d2-sub-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .d2-sub-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .d2-sub-meta {
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    .d2-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .d2-indicator.healthy { background: var(--success); }
+    .d2-indicator.warning { background: var(--warning); }
+
+    /* ===== DIRECTION 3: Minimal Control Plane ===== */
+    .d3-layout {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px;
+      min-height: calc(100vh - 180px);
+    }
+
+    .d3-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 48px;
+    }
+
+    .d3-logo {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .d3-nav {
+      display: flex;
+      gap: 32px;
+    }
+
+    .d3-nav-item {
+      font-size: 14px;
+      color: var(--foreground-muted);
+      cursor: pointer;
+      padding-bottom: 4px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .d3-nav-item:hover { color: var(--foreground); }
+    .d3-nav-item.active { color: var(--foreground); border-bottom-color: var(--accent); }
+
+    .d3-hero {
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    .d3-status-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 2px solid var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 28px;
+    }
+
+    .d3-status-text {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .d3-status-sub {
+      color: var(--foreground-muted);
+      font-size: 14px;
+    }
+
+    .d3-quick-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+    }
+
+    .d3-stat {
+      text-align: center;
+    }
+
+    .d3-stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .d3-stat-label {
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    .d3-activity {
+      margin-top: 48px;
+    }
+
+    .d3-activity-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: var(--foreground-muted);
+    }
+
+    .d3-activity-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .d3-activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .d3-activity-dot.success { background: var(--success); }
+    .d3-activity-dot.info { background: var(--info); }
+
+    .d3-activity-text {
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .d3-activity-time {
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    /* ===== DIRECTION 4: Hybrid Dense ===== */
+    .d4-layout {
+      display: flex;
+      height: calc(100vh - 180px);
+    }
+
+    .d4-sidebar {
+      width: 56px;
+      background: var(--background-card);
+      border-right: 1px solid var(--border);
+      padding: 16px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .d4-icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--foreground-muted);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .d4-icon-btn:hover { background: var(--background-elevated); color: var(--foreground); }
+    .d4-icon-btn.active { background: var(--accent); color: var(--accent-foreground); }
+
+    .d4-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .d4-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background-card);
+    }
+
+    .d4-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .d4-page-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .d4-breadcrumb {
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    .d4-health-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--success-bg);
+      border-radius: 9999px;
+      font-size: 12px;
+      color: var(--success);
+    }
+
+    .d4-content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      overflow: hidden;
+    }
+
+    .d4-primary {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .d4-secondary {
+      background: var(--background-card);
+      border-left: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .d4-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .d4-section-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--foreground-muted);
+    }
+
+    .d4-mini-table {
+      width: 100%;
+      font-size: 13px;
+      border-collapse: collapse;
+    }
+
+    .d4-mini-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--background-elevated);
+      font-weight: 500;
+      font-size: 11px;
+      color: var(--foreground-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .d4-mini-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .d4-queue-item {
+      background: var(--background-elevated);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .d4-queue-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .d4-progress {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .d4-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .d4-queue-meta {
+      font-size: 11px;
+      color: var(--foreground-muted);
+    }
+
+    /* Shared Components */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-foreground);
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-secondary {
+      background: var(--background-elevated);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: var(--border); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--foreground-muted);
+    }
+
+    .btn-ghost:hover { background: var(--background-elevated); color: var(--foreground); }
+
+    /* Comparison section */
+    .comparison-section {
+      padding: 32px;
+      background: var(--background-card);
+      border-top: 1px solid var(--border);
+    }
+
+    .comparison-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .comparison-card {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .comparison-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .comparison-card ul {
+      list-style: none;
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    .comparison-card li {
+      margin-bottom: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .comparison-card li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    .comparison-card .best-for {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--success);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-header">
+    <div class="nav-title">RSS-Remastered Design Directions</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showDirection(1)">1. Classic *arr</button>
+      <button class="nav-tab" onclick="showDirection(2)">2. Modern Dashboard</button>
+      <button class="nav-tab" onclick="showDirection(3)">3. Minimal Control</button>
+      <button class="nav-tab" onclick="showDirection(4)">4. Hybrid Dense</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <!-- Direction 1: Classic *arr -->
+    <section class="direction active" id="direction-1">
+      <div class="direction-header">
+        <h2 class="direction-title">Direction 1: Classic *arr</h2>
+        <p class="direction-subtitle">Dense, table-driven layout familiar to Sonarr/Radarr users. Maximum information density with traditional sidebar navigation.</p>
+        <div class="direction-tags">
+          <span class="tag">Table-heavy</span>
+          <span class="tag">Dense</span>
+          <span class="tag">Familiar</span>
+          <span class="tag">Sonarr-like</span>
+        </div>
+      </div>
+
+      <div class="d1-layout">
+        <aside class="d1-sidebar">
+          <div class="d1-nav-item active">
+            <span>&#9632;</span> Subscriptions
+          </div>
+          <div class="d1-nav-item">
+            <span>&#8634;</span> Queue
+          </div>
+          <div class="d1-nav-item">
+            <span>&#9733;</span> Activity
+          </div>
+          <div class="d1-nav-item">
+            <span>&#9881;</span> Settings
+          </div>
+          <div class="d1-nav-item">
+            <span>&#128295;</span> System
+          </div>
+        </aside>
+
+        <main class="d1-main">
+          <div class="d1-toolbar">
+            <div>
+              <h1 style="font-size: 18px; font-weight: 600;">Subscriptions</h1>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary">+ Add Subscription</button>
+              <button class="btn btn-ghost">&#8635; Refresh All</button>
+            </div>
+          </div>
+
+          <table class="d1-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Items</th>
+                <th>Last Sync</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tech Channel</strong><br><span style="color: var(--foreground-muted); font-size: 11px;">youtube.com/@techchannel</span></td>
+                <td>YouTube</td>
+                <td>47</td>
+                <td>2h ago</td>
+                <td><span class="d1-status healthy">&#10003; Healthy</span></td>
+                <td><button class="btn-ghost" style="padding: 4px 8px;">&#8942;</button></td>
+              </tr>
+              <tr>
+                <td><strong>Dev Podcast</strong><br><span style="color: var(--foreground-muted); font-size: 11px;">feeds.example.com/devpod</span></td>
+                <td>RSS</td>
+                <td>156</td>
+                <td>4h ago</td>
+                <td><span class="d1-status healthy">&#10003; Healthy</span></td>
+                <td><button class="btn-ghost" style="padding: 4px 8px;">&#8942;</button></td>
+              </tr>
+              <tr>
+                <td><strong>News Feed</strong><br><span style="color: var(--foreground-muted); font-size: 11px;">news.site.com/rss</span></td>
+                <td>RSS</td>
+                <td>892</td>
+                <td>1h ago</td>
+                <td><span class="d1-status warning">&#9888; Rate Limited</span></td>
+                <td><button class="btn-ghost" style="padding: 4px 8px;">&#8942;</button></td>
+              </tr>
+              <tr>
+                <td><strong>Tutorial Series</strong><br><span style="color: var(--foreground-muted); font-size: 11px;">youtube.com/@tutorials</span></td>
+                <td>YouTube</td>
+                <td>23</td>
+                <td>6h ago</td>
+                <td><span class="d1-status error">&#10005; Failed</span></td>
+                <td><button class="btn-ghost" style="padding: 4px 8px;">&#8942;</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </main>
+      </div>
+    </section>
+
+    <!-- Direction 2: Modern Dashboard -->
+    <section class="direction" id="direction-2">
+      <div class="direction-header">
+        <h2 class="direction-title">Direction 2: Modern Dashboard</h2>
+        <p class="direction-subtitle">Card-based, spacious layout inspired by Overseerr. Health-first with clear visual hierarchy and modern aesthetics.</p>
+        <div class="direction-tags">
+          <span class="tag">Card-based</span>
+          <span class="tag">Spacious</span>
+          <span class="tag">Health-first</span>
+          <span class="tag">Overseerr-like</span>
+        </div>
+      </div>
+
+      <div class="d2-layout">
+        <aside class="d2-sidebar">
+          <div class="d2-logo">RSS-Remastered</div>
+
+          <div class="d2-nav-section">
+            <div class="d2-nav-label">Overview</div>
+            <div class="d2-nav-item active">
+              <span>&#9632;</span> Dashboard
+            </div>
+          </div>
+
+          <div class="d2-nav-section">
+            <div class="d2-nav-label">Content</div>
+            <div class="d2-nav-item">
+              <span>&#9733;</span> Subscriptions
+            </div>
+            <div class="d2-nav-item">
+              <span>&#8634;</span> Queue
+            </div>
+            <div class="d2-nav-item">
+              <span>&#128203;</span> Activity
+            </div>
+          </div>
+
+          <div class="d2-nav-section">
+            <div class="d2-nav-label">System</div>
+            <div class="d2-nav-item">
+              <span>&#9881;</span> Settings
+            </div>
+          </div>
+        </aside>
+
+        <main class="d2-main">
+          <div class="d2-header">
+            <h1 class="d2-page-title">Dashboard</h1>
+            <div class="d2-health-banner">
+              <span>&#10003;</span> All systems healthy
+            </div>
+          </div>
+
+          <div class="d2-cards">
+            <div class="d2-stat-card">
+              <div class="d2-stat-label">Active Subscriptions</div>
+              <div class="d2-stat-value">12</div>
+            </div>
+            <div class="d2-stat-card">
+              <div class="d2-stat-label">Queue Depth</div>
+              <div class="d2-stat-value">3</div>
+            </div>
+            <div class="d2-stat-card">
+              <div class="d2-stat-label">Transformations Today</div>
+              <div class="d2-stat-value">7</div>
+            </div>
+          </div>
+
+          <h3 class="d2-section-title">Recent Subscriptions</h3>
+          <div class="d2-subscription-grid">
+            <div class="d2-sub-card">
+              <div>
+                <div class="d2-sub-title">Tech Channel</div>
+                <div class="d2-sub-meta">47 items &bull; Updated 2h ago</div>
+              </div>
+              <div class="d2-indicator healthy"></div>
+            </div>
+            <div class="d2-sub-card">
+              <div>
+                <div class="d2-sub-title">Dev Podcast</div>
+                <div class="d2-sub-meta">156 items &bull; Updated 4h ago</div>
+              </div>
+              <div class="d2-indicator healthy"></div>
+            </div>
+            <div class="d2-sub-card">
+              <div>
+                <div class="d2-sub-title">News Feed</div>
+                <div class="d2-sub-meta">Rate limited &bull; Retry in 1h</div>
+              </div>
+              <div class="d2-indicator warning"></div>
+            </div>
+            <div class="d2-sub-card">
+              <div>
+                <div class="d2-sub-title">Tutorial Series</div>
+                <div class="d2-sub-meta">23 items &bull; Updated 6h ago</div>
+              </div>
+              <div class="d2-indicator healthy"></div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- Direction 3: Minimal Control Plane -->
+    <section class="direction" id="direction-3">
+      <div class="direction-header">
+        <h2 class="direction-title">Direction 3: Minimal Control Plane</h2>
+        <p class="direction-subtitle">Ultra-clean, health-first interface. Centered layout with minimal chrome. Empty state IS the success state.</p>
+        <div class="direction-tags">
+          <span class="tag">Minimal</span>
+          <span class="tag">Centered</span>
+          <span class="tag">Linear-inspired</span>
+          <span class="tag">Calm technology</span>
+        </div>
+      </div>
+
+      <div class="d3-layout">
+        <header class="d3-header">
+          <div class="d3-logo">RSS-Remastered</div>
+          <nav class="d3-nav">
+            <span class="d3-nav-item active">Status</span>
+            <span class="d3-nav-item">Subscriptions</span>
+            <span class="d3-nav-item">Queue</span>
+            <span class="d3-nav-item">Settings</span>
+          </nav>
+        </header>
+
+        <div class="d3-hero">
+          <div class="d3-status-icon">&#10003;</div>
+          <div class="d3-status-text">All systems healthy</div>
+          <div class="d3-status-sub">Last checked 2 minutes ago</div>
+
+          <div class="d3-quick-stats">
+            <div class="d3-stat">
+              <div class="d3-stat-value">12</div>
+              <div class="d3-stat-label">Subscriptions</div>
+            </div>
+            <div class="d3-stat">
+              <div class="d3-stat-value">3</div>
+              <div class="d3-stat-label">In Queue</div>
+            </div>
+            <div class="d3-stat">
+              <div class="d3-stat-value">847</div>
+              <div class="d3-stat-label">Total Items</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d3-activity">
+          <div class="d3-activity-title">Recent Activity</div>
+
+          <div class="d3-activity-item">
+            <div class="d3-activity-dot success"></div>
+            <div class="d3-activity-text">Transformation completed: "How to Build APIs" → Article</div>
+            <div class="d3-activity-time">12m ago</div>
+          </div>
+
+          <div class="d3-activity-item">
+            <div class="d3-activity-dot info"></div>
+            <div class="d3-activity-text">New item: "JavaScript Best Practices" from Tech Channel</div>
+            <div class="d3-activity-time">34m ago</div>
+          </div>
+
+          <div class="d3-activity-item">
+            <div class="d3-activity-dot success"></div>
+            <div class="d3-activity-text">Feed synced: Dev Podcast (3 new items)</div>
+            <div class="d3-activity-time">1h ago</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Direction 4: Hybrid Dense -->
+    <section class="direction" id="direction-4">
+      <div class="direction-header">
+        <h2 class="direction-title">Direction 4: Hybrid Dense</h2>
+        <p class="direction-subtitle">Icon sidebar + top bar combo. Split view with primary content and contextual side panel. Balanced density.</p>
+        <div class="direction-tags">
+          <span class="tag">Icon sidebar</span>
+          <span class="tag">Split view</span>
+          <span class="tag">Balanced density</span>
+          <span class="tag">Context panel</span>
+        </div>
+      </div>
+
+      <div class="d4-layout">
+        <aside class="d4-sidebar">
+          <div class="d4-icon-btn active" title="Dashboard">&#9632;</div>
+          <div class="d4-icon-btn" title="Subscriptions">&#9733;</div>
+          <div class="d4-icon-btn" title="Queue">&#8634;</div>
+          <div class="d4-icon-btn" title="Activity">&#128203;</div>
+          <div style="flex: 1;"></div>
+          <div class="d4-icon-btn" title="Settings">&#9881;</div>
+        </aside>
+
+        <div class="d4-main">
+          <div class="d4-topbar">
+            <div class="d4-topbar-left">
+              <h1 class="d4-page-title">Dashboard</h1>
+              <span class="d4-breadcrumb">Overview</span>
+            </div>
+            <div class="d4-health-pill">
+              <span style="font-size: 10px;">&#9679;</span> Healthy
+            </div>
+          </div>
+
+          <div class="d4-content">
+            <div class="d4-primary">
+              <div class="d4-section-header">
+                <span class="d4-section-title">Subscriptions</span>
+                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">+ Add</button>
+              </div>
+
+              <table class="d4-mini-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Items</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Tech Channel</td>
+                    <td>47</td>
+                    <td><span style="color: var(--success);">&#9679;</span></td>
+                  </tr>
+                  <tr>
+                    <td>Dev Podcast</td>
+                    <td>156</td>
+                    <td><span style="color: var(--success);">&#9679;</span></td>
+                  </tr>
+                  <tr>
+                    <td>News Feed</td>
+                    <td>892</td>
+                    <td><span style="color: var(--warning);">&#9679;</span></td>
+                  </tr>
+                  <tr>
+                    <td>Tutorial Series</td>
+                    <td>23</td>
+                    <td><span style="color: var(--success);">&#9679;</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d4-secondary">
+              <div class="d4-section-header">
+                <span class="d4-section-title">Active Queue</span>
+              </div>
+
+              <div class="d4-queue-item">
+                <div class="d4-queue-title">How to Build a REST API (47:23)</div>
+                <div class="d4-progress">
+                  <div class="d4-progress-fill" style="width: 68%;"></div>
+                </div>
+                <div class="d4-queue-meta">Cleaning artifacts... &bull; 68%</div>
+              </div>
+
+              <div class="d4-queue-item">
+                <div class="d4-queue-title">JavaScript Design Patterns</div>
+                <div class="d4-progress">
+                  <div class="d4-progress-fill" style="width: 23%;"></div>
+                </div>
+                <div class="d4-queue-meta">Transcribing... &bull; 23%</div>
+              </div>
+
+              <div class="d4-queue-item">
+                <div class="d4-queue-title">Database Optimization Tips</div>
+                <div class="d4-progress">
+                  <div class="d4-progress-fill" style="width: 0%;"></div>
+                </div>
+                <div class="d4-queue-meta">Queued &bull; Position 3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+      <h3 class="comparison-title">Direction Comparison</h3>
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <h4>1. Classic *arr</h4>
+          <ul>
+            <li>Maximum information density</li>
+            <li>Table-driven, scannable</li>
+            <li>Familiar to *arr users</li>
+            <li>Traditional sidebar nav</li>
+          </ul>
+          <div class="best-for">Best for: Power users who want all data visible</div>
+        </div>
+
+        <div class="comparison-card">
+          <h4>2. Modern Dashboard</h4>
+          <ul>
+            <li>Card-based, visual hierarchy</li>
+            <li>Health status prominent</li>
+            <li>Spacious, breathable</li>
+            <li>Grouped navigation</li>
+          </ul>
+          <div class="best-for">Best for: Balanced polish + function</div>
+        </div>
+
+        <div class="comparison-card">
+          <h4>3. Minimal Control</h4>
+          <ul>
+            <li>Ultra-clean, centered</li>
+            <li>Status is the hero</li>
+            <li>Activity feed focus</li>
+            <li>Top navigation</li>
+          </ul>
+          <div class="best-for">Best for: "Calm technology" philosophy</div>
+        </div>
+
+        <div class="comparison-card">
+          <h4>4. Hybrid Dense</h4>
+          <ul>
+            <li>Icon sidebar (compact)</li>
+            <li>Split view with context</li>
+            <li>Queue always visible</li>
+            <li>Balanced density</li>
+          </ul>
+          <div class="best-for">Best for: Monitoring + action in one view</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function showDirection(num) {
+      // Update tabs
+      document.querySelectorAll('.nav-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === num - 1);
+      });
+
+      // Update directions
+      document.querySelectorAll('.direction').forEach((dir, i) => {
+        dir.classList.toggle('active', i === num - 1);
+      });
+    }
+  </script>
+</body>
+</html>

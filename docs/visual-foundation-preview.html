@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSS-Remastered Visual Foundation Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Background colors */
+      --background: hsl(222, 47%, 11%);
+      --background-card: hsl(222, 47%, 14%);
+      --background-elevated: hsl(222, 47%, 17%);
+
+      /* Foreground colors */
+      --foreground: hsl(210, 40%, 98%);
+      --foreground-muted: hsl(215, 20%, 65%);
+
+      /* Border */
+      --border: hsl(217, 33%, 22%);
+      --border-subtle: hsl(217, 33%, 17%);
+
+      /* Accent - Teal */
+      --accent: hsl(172, 66%, 50%);
+      --accent-hover: hsl(172, 66%, 45%);
+      --accent-foreground: hsl(222, 47%, 11%);
+
+      /* Status colors */
+      --success: hsl(142, 71%, 45%);
+      --success-bg: hsla(142, 71%, 45%, 0.15);
+      --warning: hsl(38, 92%, 50%);
+      --warning-bg: hsla(38, 92%, 50%, 0.15);
+      --destructive: hsl(0, 84%, 60%);
+      --destructive-bg: hsla(0, 84%, 60%, 0.15);
+      --info: hsl(217, 91%, 60%);
+      --info-bg: hsla(217, 91%, 60%, 0.15);
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Border radius */
+      --radius: 8px;
+      --radius-sm: 4px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+      padding: var(--space-8);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: var(--space-3);
+      color: var(--foreground-muted);
+    }
+
+    .subtitle {
+      color: var(--foreground-muted);
+      margin-bottom: var(--space-8);
+    }
+
+    section {
+      margin-bottom: var(--space-8);
+    }
+
+    /* Color Swatches */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .color-swatch {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .color-preview {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .color-info {
+      padding: var(--space-3);
+      border-top: 1px solid var(--border);
+    }
+
+    .color-name {
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+    }
+
+    .color-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    /* Typography */
+    .type-sample {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-4);
+    }
+
+    .type-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--foreground-muted);
+      min-width: 80px;
+    }
+
+    .type-h1 { font-size: 24px; font-weight: 600; }
+    .type-h2 { font-size: 18px; font-weight: 600; }
+    .type-h3 { font-size: 16px; font-weight: 500; }
+    .type-body { font-size: 14px; font-weight: 400; }
+    .type-small { font-size: 12px; font-weight: 400; color: var(--foreground-muted); }
+    .type-mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+
+    /* Component Examples */
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-3);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .badge-destructive {
+      background: var(--destructive-bg);
+      color: var(--destructive);
+    }
+
+    .badge-info {
+      background: var(--info-bg);
+      color: var(--info);
+    }
+
+    /* Buttons */
+    .button-row {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-foreground);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--background-elevated);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-destructive {
+      background: var(--destructive);
+      color: white;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--foreground-muted);
+    }
+
+    .btn-ghost:hover {
+      background: var(--background-elevated);
+      color: var(--foreground);
+    }
+
+    /* Progress */
+    .progress-container {
+      margin-bottom: var(--space-4);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+      font-size: 13px;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-fill.success { background: var(--success); }
+
+    /* Status Card */
+    .status-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+    }
+
+    .status-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-3);
+    }
+
+    .status-title {
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+    }
+
+    .status-subtitle {
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-indicator.healthy { background: var(--success); }
+    .status-indicator.warning { background: var(--warning); }
+    .status-indicator.error { background: var(--destructive); }
+
+    .status-meta {
+      display: flex;
+      gap: var(--space-4);
+      font-size: 12px;
+      color: var(--foreground-muted);
+    }
+
+    /* Error Alert */
+    .alert {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius);
+      margin-bottom: var(--space-3);
+    }
+
+    .alert-error {
+      background: var(--destructive-bg);
+      border: 1px solid var(--destructive);
+    }
+
+    .alert-warning {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning);
+    }
+
+    .alert-title {
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .alert-error .alert-title { color: var(--destructive); }
+    .alert-warning .alert-title { color: var(--warning); }
+
+    .alert-description {
+      font-size: 13px;
+      color: var(--foreground-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .alert-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .alert-actions .btn {
+      padding: var(--space-1) var(--space-3);
+      font-size: 12px;
+    }
+
+    /* Transformation Card */
+    .transform-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .transform-header {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .transform-content {
+      padding: var(--space-4);
+    }
+
+    .transform-step {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) 0;
+      font-size: 13px;
+    }
+
+    .step-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .step-complete {
+      background: var(--success);
+      color: var(--background);
+    }
+
+    .step-active {
+      background: var(--accent);
+      color: var(--accent-foreground);
+    }
+
+    .step-pending {
+      background: var(--border);
+      color: var(--foreground-muted);
+    }
+
+    .step-text.active { color: var(--foreground); }
+    .step-text.muted { color: var(--foreground-muted); }
+
+    /* Dashboard Preview */
+    .dashboard-preview {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      min-height: 400px;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: var(--background-card);
+      border-right: 1px solid var(--border);
+      padding: var(--space-4);
+    }
+
+    .sidebar-logo {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: var(--space-6);
+      font-size: 14px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--foreground-muted);
+      margin-bottom: var(--space-1);
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--background-elevated);
+      color: var(--foreground);
+    }
+
+    .nav-item.active {
+      background: var(--accent);
+      color: var(--accent-foreground);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: var(--space-6);
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .health-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--success);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+
+    .stat-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--foreground-muted);
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    /* Comparison Section */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-top: var(--space-6);
+    }
+
+    .comparison-card {
+      background: var(--background-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+    }
+
+    .comparison-title {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: var(--space-3);
+      color: var(--foreground-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>RSS-Remastered</h1>
+    <p class="subtitle">Visual Foundation Preview - Dark Theme with Teal Accent</p>
+
+    <!-- Color Palette -->
+    <section>
+      <h2>Color Palette</h2>
+
+      <h3>Base Colors</h3>
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--background); color: var(--foreground);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Background</div>
+            <div class="color-value">hsl(222, 47%, 11%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--background-card); color: var(--foreground);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Card</div>
+            <div class="color-value">hsl(222, 47%, 14%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--foreground); color: var(--background);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Foreground</div>
+            <div class="color-value">hsl(210, 40%, 98%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--accent); color: var(--accent-foreground);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Accent (Teal)</div>
+            <div class="color-value">hsl(172, 66%, 50%)</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Status Colors</h3>
+      <div class="color-grid">
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--success); color: var(--background);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Success</div>
+            <div class="color-value">hsl(142, 71%, 45%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--warning); color: var(--background);">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Warning</div>
+            <div class="color-value">hsl(38, 92%, 50%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--destructive); color: white;">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Destructive</div>
+            <div class="color-value">hsl(0, 84%, 60%)</div>
+          </div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-preview" style="background: var(--info); color: white;">Aa</div>
+          <div class="color-info">
+            <div class="color-name">Info</div>
+            <div class="color-value">hsl(217, 91%, 60%)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography -->
+    <section>
+      <h2>Typography</h2>
+      <div class="type-sample">
+        <span class="type-label">H1 / 24px</span>
+        <span class="type-h1">Dashboard Overview</span>
+      </div>
+      <div class="type-sample">
+        <span class="type-label">H2 / 18px</span>
+        <span class="type-h2">Active Subscriptions</span>
+      </div>
+      <div class="type-sample">
+        <span class="type-label">H3 / 16px</span>
+        <span class="type-h3">YouTube Channel Name</span>
+      </div>
+      <div class="type-sample">
+        <span class="type-label">Body / 14px</span>
+        <span class="type-body">Transform content across formats - intelligently. A 45-minute YouTube video becomes a readable article.</span>
+      </div>
+      <div class="type-sample">
+        <span class="type-label">Small / 12px</span>
+        <span class="type-small">Last updated 2 hours ago &bull; 47 items in queue</span>
+      </div>
+      <div class="type-sample">
+        <span class="type-label">Mono / 13px</span>
+        <span class="type-mono">transform_id: abc123 &bull; duration: 5m 23s</span>
+      </div>
+    </section>
+
+    <!-- Buttons & Badges -->
+    <section>
+      <h2>Buttons & Badges</h2>
+
+      <h3>Buttons</h3>
+      <div class="button-row">
+        <button class="btn btn-primary">Transform</button>
+        <button class="btn btn-secondary">Configure</button>
+        <button class="btn btn-destructive">Delete</button>
+        <button class="btn btn-ghost">Cancel</button>
+      </div>
+
+      <h3>Status Badges</h3>
+      <div class="button-row">
+        <span class="badge badge-success">&#10003; Healthy</span>
+        <span class="badge badge-warning">&#9888; Rate Limited</span>
+        <span class="badge badge-destructive">&#10005; Failed</span>
+        <span class="badge badge-info">&#8987; Processing</span>
+      </div>
+    </section>
+
+    <!-- Component Examples -->
+    <section>
+      <h2>Component Examples</h2>
+
+      <div class="component-grid">
+        <!-- Status Card -->
+        <div class="status-card">
+          <div class="status-header">
+            <div>
+              <div class="status-title">Tech Channel YouTube</div>
+              <div class="status-subtitle">youtube.com/@techchannel</div>
+            </div>
+            <div class="status-indicator healthy"></div>
+          </div>
+          <div class="status-meta">
+            <span>47 items</span>
+            <span>Last sync: 2h ago</span>
+          </div>
+        </div>
+
+        <!-- Warning Status Card -->
+        <div class="status-card">
+          <div class="status-header">
+            <div>
+              <div class="status-title">Podcast Feed</div>
+              <div class="status-subtitle">feeds.example.com/podcast</div>
+            </div>
+            <div class="status-indicator warning"></div>
+          </div>
+          <div class="status-meta">
+            <span>Rate limited</span>
+            <span>Retry in: 1h 23m</span>
+          </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-error">
+          <div class="alert-title">&#10005; Transformation Failed</div>
+          <div class="alert-description">Unable to extract audio from video. The source may be unavailable or region-locked.</div>
+          <div class="alert-actions">
+            <button class="btn btn-secondary">Retry</button>
+            <button class="btn btn-ghost">Dismiss</button>
+          </div>
+        </div>
+
+        <!-- Warning Alert -->
+        <div class="alert alert-warning">
+          <div class="alert-title">&#9888; API Rate Limit</div>
+          <div class="alert-description">YouTube API quota exceeded. Transformations will resume automatically in 2 hours.</div>
+          <div class="alert-actions">
+            <button class="btn btn-ghost">Configure Limits</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transformation Progress -->
+    <section>
+      <h2>Transformation Progress</h2>
+
+      <div class="transform-card">
+        <div class="transform-header">
+          <div class="card-title">Transforming: "How to Build a REST API" (47:23)</div>
+          <span class="badge badge-info">&#8987; In Progress</span>
+        </div>
+        <div class="transform-content">
+          <div class="progress-container">
+            <div class="progress-label">
+              <span>Overall Progress</span>
+              <span>68%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 68%;"></div>
+            </div>
+          </div>
+
+          <div class="transform-step">
+            <div class="step-icon step-complete">&#10003;</div>
+            <span class="step-text muted">Extracting 47 minutes of audio...</span>
+          </div>
+          <div class="transform-step">
+            <div class="step-icon step-complete">&#10003;</div>
+            <span class="step-text muted">Transcribing conversation...</span>
+          </div>
+          <div class="transform-step">
+            <div class="step-icon step-active">&#8226;</div>
+            <span class="step-text active">Cleaning verbal artifacts...</span>
+          </div>
+          <div class="transform-step">
+            <div class="step-icon step-pending">4</div>
+            <span class="step-text muted">Formatting for readability...</span>
+          </div>
+
+          <p style="font-size: 12px; color: var(--foreground-muted); margin-top: var(--space-4);">
+            Usually takes 5-15 minutes for content this length
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section>
+      <h2>Dashboard Layout Preview</h2>
+
+      <div class="dashboard-preview">
+        <div class="sidebar">
+          <div class="sidebar-logo">RSS-Remastered</div>
+          <div class="nav-item active">
+            <span>&#9632;</span> Dashboard
+          </div>
+          <div class="nav-item">
+            <span>&#9733;</span> Subscriptions
+          </div>
+          <div class="nav-item">
+            <span>&#8634;</span> Queue
+          </div>
+          <div class="nav-item">
+            <span>&#9881;</span> Settings
+          </div>
+        </div>
+        <div class="main-content">
+          <div class="main-header">
+            <h1 style="font-size: 20px;">Dashboard</h1>
+            <div class="health-banner">
+              <span>&#10003;</span> All systems healthy
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Active Subscriptions</div>
+              <div class="stat-value">12</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Queue Depth</div>
+              <div class="stat-value">3</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Transformations Today</div>
+              <div class="stat-value">7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Healthy vs Unhealthy Comparison -->
+    <section>
+      <h2>"Calm Technology" States</h2>
+
+      <div class="comparison">
+        <div class="comparison-card">
+          <div class="comparison-title">Healthy State (Calm)</div>
+          <div class="health-banner" style="margin-bottom: var(--space-4);">
+            <span>&#10003;</span> All systems healthy
+          </div>
+          <p style="font-size: 13px; color: var(--foreground-muted);">
+            Minimal UI. Green indicator confirms everything is working.
+            Empty state IS the success state - no vanity metrics, no attention-grabbing.
+          </p>
+        </div>
+
+        <div class="comparison-card">
+          <div class="comparison-title">Unhealthy State (Clear)</div>
+          <div class="alert alert-error" style="margin-bottom: var(--space-3);">
+            <div class="alert-title">&#10005; 2 Feeds Failing</div>
+            <div class="alert-description">Connection errors on YouTube channels</div>
+          </div>
+          <div class="alert alert-warning">
+            <div class="alert-title">&#9888; Rate Limited</div>
+            <div class="alert-description">API quota exceeded, retry in 2h</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px solid var(--border);">
+      <p style="color: var(--foreground-muted); font-size: 13px; text-align: center;">
+        RSS-Remastered Visual Foundation Preview &bull;
+        <span style="color: var(--accent);">Teal Accent</span> &bull;
+        Dark Theme Default &bull;
+        shadcn/ui + Tailwind CSS
+      </p>
+    </section>
+  </div>
+</body>
+</html>
