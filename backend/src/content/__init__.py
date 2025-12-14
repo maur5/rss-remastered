@@ -1,0 +1,1 @@
+"""Content aggregation domain module."""

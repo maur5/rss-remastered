@@ -1,0 +1,1 @@
+"""Feed generation domain module."""

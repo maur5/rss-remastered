@@ -15,6 +15,8 @@ persona:
   principles: []
 
 # Add custom critical actions (appended after standard config loading)
+# Note: Git workflow is handled by SM orchestrator, not Dev agent.
+# See docs/bmad-subagent-orchestration.md for git responsibilities.
 critical_actions: []
 
 # Add persistent memories for the agent

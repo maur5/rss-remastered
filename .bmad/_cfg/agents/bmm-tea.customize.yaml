@@ -16,6 +16,8 @@ persona:
 
 # Add custom critical actions (appended after standard config loading)
 critical_actions: []
+# Note: Git workflow and checkpoint rules are in project_context.md
+# TEA agent treats project_context.md as "the bible" so no overrides needed here
 
 # Add persistent memories for the agent
 memories: []

@@ -385,6 +385,12 @@ log.info("transformation_started", job_id=42, content_id=123)
 
 ---
 
+<!-- COMMENTED OUT: Git Workflow Rules are handled by SM orchestrator in subagent model.
+     See docs/bmad-subagent-orchestration.md for git responsibilities:
+     - SM owns: branch creation, merging, pushing, branch deletion
+     - Dev owns: commits only (logical checkpoints within branch)
+     Restore these rules if returning to interactive human-driven sessions.
+
 ## Git Workflow Rules
 
 **Branch Strategy:**
@@ -477,6 +483,7 @@ When completing a major phase transition, the commit should:
 **Push command:** `git push origin <branch>` (never force push to main/dev without explicit approval)
 
 **Why:** Atomic commits at status checkpoints create traceable history between documentation and implementation progress. Feature branches per story enable clean isolation and review gates.
+-->
 
 ---
 
