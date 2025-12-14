@@ -1,4 +1,7 @@
-"""Tests for database configuration and session management."""
+"""Tests for database configuration and session management.
+
+Updated for Story 1.5: Uses Settings from core.config for database URL.
+"""
 
 import os
 from pathlib import Path
@@ -8,36 +11,36 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.config import get_settings
 from src.core.database import (
     AsyncSessionLocal,
     Base,
     DatabaseSession,
     async_engine,
     create_engine,
-    get_database_url,
     get_db,
 )
 
 
 class TestGetDatabaseUrl:
-    """Tests for get_database_url function."""
+    """Tests for database URL configuration via Settings."""
 
     def test_returns_default_url_when_no_env_var(self) -> None:
         """Test that default SQLite URL is returned when no env var set."""
-        with patch.dict(os.environ, {}, clear=True):
-            # Remove RSS_DATABASE_URL if present
-            os.environ.pop("RSS_DATABASE_URL", None)
-            url = get_database_url()
-
-        assert url == "sqlite+aiosqlite:///data/rss.db"
+        # Clear settings cache to get fresh settings
+        get_settings.cache_clear()
+        settings = get_settings()
+        assert settings.database_url == "sqlite+aiosqlite:///data/rss.db"
 
     def test_returns_env_var_when_set(self) -> None:
         """Test that environment variable URL is returned when set."""
+        get_settings.cache_clear()
         custom_url = "sqlite+aiosqlite:///custom/path.db"
-        with patch.dict(os.environ, {"RSS_DATABASE_URL": custom_url}):
-            url = get_database_url()
-
-        assert url == custom_url
+        with patch.dict(os.environ, {"RSS_DATABASE_URL": custom_url}, clear=False):
+            get_settings.cache_clear()
+            settings = get_settings()
+            assert settings.database_url == custom_url
+        get_settings.cache_clear()
 
 
 class TestCreateEngine:

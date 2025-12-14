@@ -1,9 +1,10 @@
 """FastAPI application entry point.
 
 This module creates and configures the FastAPI application instance.
+
+Story 1.5: Updated to validate settings at startup
 """
 
-import os
 import time
 import traceback
 import uuid
@@ -13,17 +14,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
+from src.core.config import get_settings, validate_settings_on_startup
 from src.core.exceptions import AppException
 from src.core.logging import bind_contextvars, clear_contextvars, get_logger, setup_logging
-from src.health import router as health_router
 
-# Initialize structured logging as early as possible
+# Validate settings before anything else
+# This ensures the application fails fast with clear error messages
+# if configuration is invalid
+settings = validate_settings_on_startup()
+
+# Initialize structured logging (uses settings)
 setup_logging()
 
 # Get logger for this module
 logger = get_logger("main")
 
-# Development mode detection
+# Development mode detection from settings or DEBUG env var
+# Check for explicit DEBUG environment variable for backward compatibility
+import os
 DEBUG = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
 
 
@@ -111,18 +119,23 @@ app.add_middleware(
 # Request logging middleware (added after CORS so CORS headers are included)
 app.add_middleware(RequestLoggingMiddleware)
 
-# Mount routers
+# Import and mount routers
+from src.health import router as health_router
 app.include_router(health_router, prefix="/api")
 
 
 @app.on_event("startup")
 async def startup_event() -> None:
-    """Log application startup."""
+    """Log application startup with configuration details."""
     logger.info(
         "application_started",
         title=app.title,
         version=app.version,
         debug=DEBUG,
+        database_url=settings.database_url.split("///")[0] + "///***",  # Mask DB path
+        log_level=settings.log_level,
+        log_format=settings.log_format,
+        ai_provider=settings.ai.provider,
     )
 
 
