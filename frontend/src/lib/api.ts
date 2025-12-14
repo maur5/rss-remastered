@@ -1,6 +1,6 @@
 // API client foundation
-// Base URL for backend API
-const API_BASE_URL = 'http://localhost:8000/api'
+// Base URL for backend API - configurable via environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
 
 // Generic fetch wrapper with error handling
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
