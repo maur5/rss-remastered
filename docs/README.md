@@ -6,6 +6,7 @@ Welcome to the RSS-Remastered documentation. This guide helps you navigate all p
 
 | What You Need | Where to Go |
 |---------------|-------------|
+| **Executive summary for stakeholders** | [Product Brief](#product-requirements) |
 | **Understand the product vision** | [Product Requirements (PRD)](#product-requirements) |
 | **Understand the system design** | [Architecture](#architecture-and-design) |
 | **Implement features** | [Project Context](#developer-guides) → [Epics & Stories](#implementation) |
@@ -17,7 +18,17 @@ Welcome to the RSS-Remastered documentation. This guide helps you navigate all p
 
 ### Product Requirements
 
-The source of truth for what we're building and why.
+Strategic and detailed documentation of what we're building and why.
+
+- **[analysis/product-brief-rss-remastered-2025-12-15.md](analysis/product-brief-rss-remastered-2025-12-15.md)** - Product Brief
+  - Executive summary with clear value proposition
+  - Core vision (problem, solution, differentiators)
+  - Target users (Marcus, Sofia, Jordan personas)
+  - Success metrics and North Star vision
+  - Product scope (MVP definition, roadmap)
+  - Technology foundation and stack selection
+  - Risk mitigation strategies
+  - Strategic positioning and go-to-market
 
 - **[prd.md](prd.md)** - Complete Product Requirements Document
   - Executive summary and vision
@@ -26,7 +37,7 @@ The source of truth for what we're building and why.
   - 36 non-functional requirements
   - Success metrics and release criteria
 
-**Start here** to understand the product vision and requirements.
+**Product Brief** is ideal for executive communication, stakeholder presentations, and community positioning. **PRD** is the detailed technical requirements reference.
 
 ### Architecture and Design
 
@@ -149,14 +160,20 @@ Guides for development workflow tools.
 
 ## Analysis and Research
 
-Background research and brainstorming sessions.
+Background research, strategic documents, and brainstorming sessions.
+
+- **[analysis/product-brief-rss-remastered-2025-12-15.md](analysis/product-brief-rss-remastered-2025-12-15.md)** - Product Brief
+  - Strategic positioning document
+  - Executive-level communication
+  - Community positioning (r/selfhosted posts)
+  - Contributor onboarding
 
 - **[analysis/brainstorming-session-2025-12-13.md](analysis/brainstorming-session-2025-12-13.md)** - Initial brainstorming session
   - Product vision exploration
   - Feature ideation
   - Technical approach discussions
 
-**Review these** for context on product decisions.
+**Review these** for context on product decisions and strategic positioning.
 
 ## Documentation Standards
 
@@ -173,10 +190,11 @@ See [BMAD documentation standards](../.bmad/bmm/data/documentation-standards.md)
 ## How to Use This Documentation
 
 ### I'm new to the project
-1. Read [prd.md](prd.md) - Understand what we're building
-2. Read [architecture.md](architecture.md) - Understand how it's designed
-3. Review [project_context.md](project_context.md) - Learn critical implementation rules
-4. Check [implementation-readiness-report-2025-12-14.md](implementation-readiness-report-2025-12-14.md) - See current status
+1. Read [analysis/product-brief-rss-remastered-2025-12-15.md](analysis/product-brief-rss-remastered-2025-12-15.md) - Get the strategic overview
+2. Read [prd.md](prd.md) - Understand detailed requirements
+3. Read [architecture.md](architecture.md) - Understand how it's designed
+4. Review [project_context.md](project_context.md) - Learn critical implementation rules
+5. Check [implementation-readiness-report-2025-12-14.md](implementation-readiness-report-2025-12-14.md) - See current status
 
 ### I'm implementing a feature
 1. Find your story in [epics.md](epics.md) or [sprint-artifacts/](sprint-artifacts/)
@@ -209,6 +227,7 @@ When adding or updating documentation:
 
 - Check the relevant section above
 - Search within specific docs (all are CommonMark-formatted)
-- Review [prd.md](prd.md) for requirements context
+- Review [analysis/product-brief-rss-remastered-2025-12-15.md](analysis/product-brief-rss-remastered-2025-12-15.md) for strategic context
+- Review [prd.md](prd.md) for detailed requirements
 - Check [architecture.md](architecture.md) for design decisions
 - Consult [project_context.md](project_context.md) for implementation rules
